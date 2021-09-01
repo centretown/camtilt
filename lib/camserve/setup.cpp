@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #include "setup.h"
 
 esp_err_t camera_setup()
@@ -46,27 +48,27 @@ esp_err_t camera_setup()
     return err;
 }
 
-static CamServe server;
+static CamServe serve;
 
 static esp_err_t statusHandler(httpd_req_t *req)
 {
-    return server.statusHandler.handle(req);
+    return serve.statusHandler.handle(req);
 }
 
 static esp_err_t streamHandler(httpd_req_t *req)
 {
-    return server.streamHandler.handle(req);
+    return serve.streamHandler.handle(req);
 }
 
 static esp_err_t controlHandler(httpd_req_t *req)
 {
-    return server.controlHandler.handle(req);
+    return serve.controlHandler.handle(req);
 }
 
 esp_err_t camera_start(uint16_t port)
 {
-    server.status = statusHandler;
-    server.control = controlHandler;
-    server.stream = streamHandler;
-    return server.start(port);
+    serve.status = statusHandler;
+    serve.control = controlHandler;
+    serve.stream = streamHandler;
+    return serve.start(port);
 }

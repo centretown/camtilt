@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #include "CamHandler.h"
 
 esp_err_t CamHandler::respond(httpd_req_t *req, esp_err_t res)

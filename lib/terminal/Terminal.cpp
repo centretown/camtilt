@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #include <Terminal.h>
 
 void Terminal::setup(const char *p)

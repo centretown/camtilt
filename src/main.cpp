@@ -1,3 +1,4 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
 
 #include <Arduino.h>
 #include "esp_camera.h"
@@ -11,8 +12,9 @@
 
 // Replace with your network credentials
 
-const char *ssid = "*****";
-const char *password = "******";
+#include "/home/dave/ssid/ssid.h"
+// const char *ssid = "*****";
+// const char *password = "******";
 
 const uint8_t ledPin = 33;
 Terminal terminal(Serial, ledPin);

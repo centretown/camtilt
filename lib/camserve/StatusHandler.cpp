@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #include "StatusHandler.h"
 
 static const char statusFormat[] = R"rawliteral({"framesize":%u,

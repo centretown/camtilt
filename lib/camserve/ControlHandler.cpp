@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #include "ControlHandler.h"
 
 esp_err_t ControlHandler::handle(httpd_req_t *req)

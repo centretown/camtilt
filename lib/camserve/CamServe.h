@@ -1,3 +1,5 @@
+// Copyright (c) 2021 Dave Marsh. See LICENSE.
+
 #pragma once
 #include <Arduino.h>
 #include <esp_http_server.h>
