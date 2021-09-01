@@ -10,8 +10,9 @@
 #include "setup.h"
 
 // Replace with your network credentials
-const char *ssid = "xlab";
-const char *password = "BeetlebOmb";
+
+const char *ssid = "*****";
+const char *password = "******";
 
 const uint8_t ledPin = 33;
 Terminal terminal(Serial, ledPin);
