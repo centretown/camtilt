@@ -2,6 +2,9 @@
 
 #include "Lookup.h"
 
+sensor_t *lookup_sensor = NULL;
+MicroTerm *lookup_term = NULL;
+
 // we must have order
 LookupItem items[] = {
     {"ae_level", NULL},
@@ -16,6 +19,7 @@ LookupItem items[] = {
     {"colorbar", NULL},
     {"contrast", NULL},
     {"dcw", NULL},
+    {"denoise", NULL},
     {"framesize", NULL},
     {"gainceiling", NULL},
     {"hmirror", NULL},
@@ -31,28 +35,25 @@ LookupItem items[] = {
     {"wpc", NULL},
 };
 
-const LookupItem *find(const char *code, const LookupItem *items,
-                       size_t left, size_t right)
+esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val)
 {
-    while (left <= right)
+    if (var == NULL || val == NULL || varLen == 0)
+        return ESP_ERR_HTTPD_INVALID_REQ;
+
+    char value[32] = {0};
+    esp_err_t err = httpd_query_key_value(buf, "var", var, varLen);
+    if (err != ESP_OK)
     {
-        // mid = left + (right - left) / 2;
-        size_t mid = left + ((right - left) >> 1);
-        int cmp = strcmp(code, items[mid].id);
-        if (cmp == 0)
-        {
-            return &items[mid];
-        }
-        if (cmp > 0)
-        {
-            left = mid + 1;
-        }
-        else
-        {
-            right = mid - 1;
-        }
+        return err;
     }
-    return NULL;
+    err = httpd_query_key_value(buf, "val", value, sizeof(value));
+    if (err != ESP_OK)
+    {
+        return err;
+    }
+
+    *val = atoi(value);
+    return ESP_OK;
 }
 
 esp_err_t gainceiling(sensor_t *sensor, int val)
@@ -79,7 +80,12 @@ esp_err_t moveServo(const char *cmd, int angle)
         angle = 180;
     }
     // send cmd to servo controller
-    Serial.printf("?%s:%d\n", cmd, angle);
+    char buffer[32];
+    snprintf(buffer, sizeof(buffer), "?%s=%d", cmd, angle);
+    if (lookup_term != NULL)
+    {
+        lookup_term->println(buffer);
+    }
     return 0;
 }
 
@@ -93,10 +99,9 @@ esp_err_t tilt(sensor_t *sensor, int angle)
     return moveServo("tilt", angle);
 }
 
-sensor_t *lookup_sensor = NULL;
-
-void initializeLookup(sensor_t *s)
+void initializeLookup(sensor_t *s, MicroTerm *term)
 {
+    lookup_term = term;
     Serial.println("init lookup");
     lookup_sensor = s;
     for (size_t i = 0; i < sizeof(items) / sizeof(items[0]); i++)
@@ -136,6 +141,8 @@ void initializeLookup(sensor_t *s)
             items[i].action = lookup_sensor->set_aec2;
         else if (!strcmp(variable, "dcw"))
             items[i].action = lookup_sensor->set_dcw;
+        else if (!strcmp(variable, "denoise"))
+            items[i].action = lookup_sensor->set_denoise;
         else if (!strcmp(variable, "bpc"))
             items[i].action = lookup_sensor->set_bpc;
         else if (!strcmp(variable, "wpc"))
@@ -157,33 +164,32 @@ void initializeLookup(sensor_t *s)
     }
 }
 
-const LookupItem *lookup(sensor_t *s, const char *code)
+const LookupItem *find(const char *code, const LookupItem *items,
+                       size_t left, size_t right)
 {
-    if (lookup_sensor != s)
+    while (left <= right)
     {
-        initializeLookup(s);
+        // mid = left + (right - left) / 2;
+        size_t mid = left + ((right - left) >> 1);
+        int cmp = strcmp(code, items[mid].id);
+        if (cmp == 0)
+        {
+            return &items[mid];
+        }
+        if (cmp > 0)
+        {
+            left = mid + 1;
+        }
+        else
+        {
+            right = mid - 1;
+        }
     }
-    return find(code, items, 0,
-                sizeof(items) / sizeof(items[0]) - 1);
+    return NULL;
 }
 
-esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val)
+const LookupItem *find(sensor_t *s, const char *code)
 {
-    if (var == NULL || val == NULL || varLen == 0)
-        return ESP_ERR_HTTPD_INVALID_REQ;
-
-    char value[32] = {0};
-    esp_err_t err = httpd_query_key_value(buf, "var", var, varLen);
-    if (err != ESP_OK)
-    {
-        return err;
-    }
-    err = httpd_query_key_value(buf, "val", value, sizeof(value));
-    if (err != ESP_OK)
-    {
-        return err;
-    }
-
-    *val = atoi(value);
-    return ESP_OK;
+    return find(code, items, 0,
+                sizeof(items) / sizeof(items[0]) - 1);
 }

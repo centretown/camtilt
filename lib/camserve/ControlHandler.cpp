@@ -21,7 +21,7 @@ esp_err_t ControlHandler::handle(httpd_req_t *req)
         return respond(req, err);
     }
  
-    const LookupItem *lkup = lookup(sensor, variable);
+    const LookupItem *lkup = find(sensor, variable);
     if (!lkup)
     {
         return respond(req, ESP_ERR_HTTPD_INVALID_REQ);

@@ -7,17 +7,16 @@
 #include "soc/rtc_cntl_reg.h" // disable brownout problems
 #include "esp_http_server.h"
 
-#include "Terminal.h"
+#include "MicroTerm.h"
 #include "setup.h"
 
 // Replace with your network credentials
-
 #include "/home/dave/ssid/ssid.h"
 // const char *ssid = "*****";
 // const char *password = "******";
 
 const uint8_t ledPin = 33;
-Terminal terminal(Serial, ledPin);
+MicroTerm terminal(Serial);
 
 void setup()
 {
@@ -48,13 +47,28 @@ void setup()
     ESP.restart();
   }
 
-  terminal.setup(WiFi.localIP().toString().c_str());
+  const char *ip = WiFi.localIP().toString().c_str();
+  size_t len = strlen(ip);
+  if (len < 3)
+  {
+    ip = "unk";
+  }
+  const char *prefix = strrchr(ip, '.');
+  if (prefix == NULL)
+  {
+    prefix = ip + len - 3;
+  }
+
+  terminal.setup(prefix);
+  terminal.user(false);
 
   err = camera_start(80);
   if (err != ESP_OK)
   {
     Serial.printf("%x: %s\n", err, esp_err_to_name(err));
   }
+
+  initializeLookup(esp_camera_sensor_get(), &terminal);
 }
 
 #include "Lookup.h"
@@ -68,7 +82,7 @@ void loop()
     {
       return;
     }
-    terminal.println(cmd);
+    // terminal.println(cmd);
 
     char variable[32] = {0};
     int val = 0;
@@ -79,23 +93,13 @@ void loop()
       return;
     }
 
-    if (!strcmp(variable, "pan") ||
-        !strcmp(variable, "tilt"))
-    {
-      char buffer[32];
-      snprintf(buffer, sizeof(buffer),
-               "%s:%d\n", variable, val);
-      terminal.println(buffer);
-      return;
-    }
-
     sensor_t *sensor = esp_camera_sensor_get();
-    const LookupItem *item = lookup(sensor, variable);
+    const LookupItem *item = find(sensor, variable);
     if (item == NULL)
     {
       char buffer[32];
       snprintf(buffer, sizeof(buffer),
-               "%s:%d NOT FOUND\n", variable, val);
+               "%s:%d NOT FOUND", variable, val);
       terminal.println(buffer);
       return;
     }
