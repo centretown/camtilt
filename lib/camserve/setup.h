@@ -1,4 +1,5 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #define CAMERA_MODEL_AI_THINKER
 //#define CAMERA_MODEL_M5STACK_PSRAM
@@ -111,3 +112,5 @@
 
 esp_err_t camera_setup();
 esp_err_t camera_start(uint16_t port);
+
+#endif //ARDUINO

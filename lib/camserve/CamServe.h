@@ -1,9 +1,13 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #pragma once
+
 #include <Arduino.h>
 #include <esp_http_server.h>
 #include <esp_camera.h>
+
+#include "Lookup.h"
 #include "ControlHandler.h"
 #include "StreamHandler.h"
 #include "StatusHandler.h"
@@ -13,6 +17,7 @@ class CamServe
 public:
     const sensor_t *sensor;
     uint16_t port;
+
     ControlHandler controlHandler;
     StreamHandler streamHandler;
     StatusHandler statusHandler;
@@ -26,4 +31,12 @@ public:
     ~CamServe() {}
 
     esp_err_t start(uint16_t port);
+    esp_err_t set_servo_id(int);
+    esp_err_t set_servo_control_id(int);
+    esp_err_t set_servo_index(int);
+
+private:
+    void setCrossOrigin();
 };
+
+#endif

@@ -1,8 +1,10 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #include "Lookup.h"
 
 sensor_t *lookup_sensor = NULL;
+// CamServe *lookup_camera = NULL;
 MicroTerm *lookup_term = NULL;
 
 // we must have order
@@ -28,6 +30,11 @@ LookupItem items[] = {
     {"quality", NULL},
     {"raw_gma", NULL},
     {"saturation", NULL},
+
+    {"servo_control_id", NULL},
+    {"servo_id", NULL},
+    {"servo_type", NULL},
+
     {"special_effect", NULL},
     {"tilt", NULL},
     {"vflip", NULL},
@@ -38,14 +45,17 @@ LookupItem items[] = {
 esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val)
 {
     if (var == NULL || val == NULL || varLen == 0)
+    {
         return ESP_ERR_HTTPD_INVALID_REQ;
+    }
 
-    char value[32] = {0};
     esp_err_t err = httpd_query_key_value(buf, "var", var, varLen);
     if (err != ESP_OK)
     {
         return err;
     }
+
+    char value[32] = {0};
     err = httpd_query_key_value(buf, "val", value, sizeof(value));
     if (err != ESP_OK)
     {
@@ -86,7 +96,25 @@ esp_err_t moveServo(const char *cmd, int angle)
     {
         lookup_term->println(buffer);
     }
-    return 0;
+    return ESP_OK;
+}
+
+esp_err_t set_servo_id(sensor_t *, int id)
+{
+    return ESP_OK;
+    // return lookup_camera->set_servo_id(id);
+}
+
+esp_err_t set_servo_control_id(sensor_t *sensor, int control_id)
+{
+    return ESP_OK;
+    // return lookup_camera->set_servo_id(control_id);
+}
+
+esp_err_t set_servo_index(sensor_t *sensor, int index)
+{
+    return ESP_OK;
+    // return lookup_camera->set_servo_index(index);
 }
 
 esp_err_t pan(sensor_t *sensor, int angle)
@@ -101,6 +129,7 @@ esp_err_t tilt(sensor_t *sensor, int angle)
 
 void initializeLookup(sensor_t *s, MicroTerm *term)
 {
+    // lookup_camera = camera;
     lookup_term = term;
     Serial.println("init lookup");
     lookup_sensor = s;
@@ -161,6 +190,12 @@ void initializeLookup(sensor_t *s, MicroTerm *term)
             items[i].action = pan;
         else if (!strcmp(variable, "tilt"))
             items[i].action = tilt;
+        else if (!strcmp(variable, "servo_id"))
+            items[i].action = set_servo_id;
+        else if (!strcmp(variable, "servo_control_id"))
+            items[i].action = set_servo_control_id;
+        else if (!strcmp(variable, "servo_index"))
+            items[i].action = set_servo_index;
     }
 }
 
@@ -193,3 +228,4 @@ const LookupItem *find(sensor_t *s, const char *code)
     return find(code, items, 0,
                 sizeof(items) / sizeof(items[0]) - 1);
 }
+#endif //ARDUINO

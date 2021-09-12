@@ -1,5 +1,7 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
+#ifdef ARDUINO
+
 #include "StatusHandler.h"
 
 static const char statusFormat[] = R"rawliteral({"framesize":%u,
@@ -67,3 +69,5 @@ esp_err_t StatusHandler::handle(httpd_req_t *req)
         return respond(req, err);
     return httpd_resp_send(req, json_response, strlen(json_response));
 }
+
+#endif //ARDUINO

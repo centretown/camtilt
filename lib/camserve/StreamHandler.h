@@ -1,4 +1,5 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #pragma once
 
@@ -11,3 +12,5 @@ public:
     ~StreamHandler() {}
     esp_err_t handle(httpd_req_t *req);
 };
+
+#endif //ARDUINO

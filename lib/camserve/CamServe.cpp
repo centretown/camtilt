@@ -1,4 +1,5 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #include "CamServe.h"
 
@@ -61,3 +62,8 @@ esp_err_t CamServe::start(uint16_t port)
 
     return lastErr;
 }
+
+// void CamServe::setCrossOrigin(httpd_req_t *r){
+// };
+
+#endif

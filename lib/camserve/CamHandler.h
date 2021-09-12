@@ -1,6 +1,9 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
+#ifdef ARDUINO
+
 #pragma once
+
 #include <Arduino.h>
 #include <esp_http_server.h>
 #include <esp_camera.h>
@@ -19,3 +22,5 @@ public:
     static esp_err_t respond(httpd_req_t *req, esp_err_t res);
     virtual esp_err_t handle(httpd_req_t *req) = 0;
 };
+
+#endif //ARDUINO

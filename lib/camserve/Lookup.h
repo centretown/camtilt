@@ -1,11 +1,14 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
+#ifdef ARDUINO
+
 #pragma once
 
 #include <Arduino.h>
+#include <MicroTerm.h>
 #include <esp_http_server.h>
 #include <esp_camera.h>
-#include <MicroTerm.h>
+// #include "CamServe.h"
 
 typedef esp_err_t (*ActionFunc)(sensor_t *s, int i);
 esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val);
@@ -21,3 +24,5 @@ public:
 const LookupItem *find(const char *code, const LookupItem *items,
                        size_t left, size_t right);
 const LookupItem *find(sensor_t *sensor, const char *code);
+
+#endif //ARDUINO

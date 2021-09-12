@@ -1,4 +1,5 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
+#ifdef ARDUINO
 
 #include "StreamHandler.h"
 
@@ -87,3 +88,4 @@ esp_err_t StreamHandler::handle(httpd_req_t *req)
     }
     return res;
 }
+#endif //ARDUINO

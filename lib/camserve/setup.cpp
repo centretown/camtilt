@@ -1,5 +1,7 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
+#ifdef ARDUINO
+
 #include "setup.h"
 
 esp_err_t camera_setup()
@@ -72,3 +74,5 @@ esp_err_t camera_start(uint16_t port)
     serve.stream = streamHandler;
     return serve.start(port);
 }
+
+#endif //ARDUINO
