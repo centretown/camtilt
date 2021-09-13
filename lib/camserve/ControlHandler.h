@@ -4,14 +4,19 @@
 #pragma once
 #include <Arduino.h>
 #include <esp_http_server.h>
+#include "Director.h"
 #include "CamHandler.h"
-#include "Lookup.h"
 
 class ControlHandler : public CamHandler
 {
 private:
+    Director *dir;
+
 public:
-    ControlHandler() {}
+    ControlHandler()
+    {
+        dir = Director::getDirector();
+    }
     ~ControlHandler() {}
     esp_err_t handle(httpd_req_t *req);
 };

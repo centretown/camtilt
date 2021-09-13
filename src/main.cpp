@@ -1,5 +1,7 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
+#ifdef ARDUINO
+
 #include <Arduino.h>
 #include "esp_camera.h"
 #include <WiFi.h>
@@ -9,6 +11,9 @@
 
 #include "MicroTerm.h"
 #include "setup.h"
+#include "Director.h"
+#include "ServoActor.h"
+#include "CamActor.h"
 
 // Replace with your network credentials
 #include "/home/dave/ssid/ssid.h"
@@ -17,6 +22,7 @@
 
 const uint8_t ledPin = 33;
 MicroTerm terminal(Serial);
+Director *dir = NULL;
 
 void setup()
 {
@@ -68,10 +74,19 @@ void setup()
     Serial.printf("%x: %s\n", err, esp_err_to_name(err));
   }
 
-  initializeLookup(esp_camera_sensor_get(), &terminal);
+  CamActor::initializeCamActors(esp_camera_sensor_get());
+  // printf("cam actors count: %lu", CamActor::camActorCount);
+
+  dir = Director::getDirector();
+  dir->allocate(CamActor::camActorCount + 4);
+  dir->add((Actor **)servoActors, 4);
+  dir->add((Actor **)CamActor::camActors, CamActor::camActorCount);
+  dir->sort();
+
+  // initializeLookup(esp_camera_sensor_get(), &terminal);
 }
 
-#include "Lookup.h"
+// #include "Lookup.h"
 
 void loop()
 {
@@ -93,9 +108,8 @@ void loop()
       return;
     }
 
-    sensor_t *sensor = esp_camera_sensor_get();
-    const LookupItem *item = find(sensor, variable);
-    if (item == NULL)
+    Actor *actor = dir->find(variable);
+    if (!strcmp(actor->id, "null"))
     {
       char buffer[32];
       snprintf(buffer, sizeof(buffer),
@@ -104,7 +118,7 @@ void loop()
       return;
     }
 
-    err = item->action(sensor, val);
+    err = actor->act(val);
     if (err != ESP_OK)
     {
       terminal.println(esp_err_to_name(err));
@@ -112,3 +126,4 @@ void loop()
     }
   }
 }
+#endif //ARDUINO

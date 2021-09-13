@@ -7,7 +7,7 @@
 #include <esp_http_server.h>
 #include <esp_camera.h>
 
-#include "Lookup.h"
+#include "Director.h"
 #include "ControlHandler.h"
 #include "StreamHandler.h"
 #include "StatusHandler.h"

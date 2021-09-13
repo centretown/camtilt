@@ -4,6 +4,9 @@
         "limits": "cpp",
         "*.tcc": "cpp",
         "streambuf": "cpp",
-        "ostream": "cpp"
+        "ostream": "cpp",
+        "string": "cpp",
+        "unordered_map": "cpp",
+        "unordered_set": "cpp"
     }
 }
