@@ -1,10 +1,9 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
-#ifdef ARDUINO
 
 #pragma once
-#include <Arduino.h>
-#include <esp_http_server.h>
+#include "base.h"
 #include "Director.h"
+#include "query.h"
 #include "CamHandler.h"
 
 class ControlHandler : public CamHandler
@@ -21,4 +20,3 @@ public:
     esp_err_t handle(httpd_req_t *req);
 };
 
-#endif //ARDUINO

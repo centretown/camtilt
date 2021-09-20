@@ -1,12 +1,11 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
 #pragma once
-// (*ActionFunc)(T *p, int v);
 
 typedef int err_action_t;
-#define ERR_NOT_FOUND 9999;
+#define ActorNotFound 9999
+#define ActorOK 0
 
-// template <class T>
 class Actor
 {
 public:
@@ -14,6 +13,6 @@ public:
     Actor(const char *id) : id(id) {}
     ~Actor() {}
 
+    virtual err_action_t parse(const char *buf);
     virtual err_action_t act(int action) = 0;
 };
-

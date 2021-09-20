@@ -1,6 +1,11 @@
-#pragma once
 #ifndef ARDUINO
-#include <stdio.h>
+
+#pragma once
+#include "base.h"
+#include "mockesp.h"
+// #include "MockHttpServer.h"
+
+#define PIXFORMAT_JPEG 1
 
 typedef unsigned pixformat_t;
 typedef unsigned gainceiling_t;

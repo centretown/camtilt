@@ -66,25 +66,6 @@ Actor *Director::find(const char *code)
     return &nullActor;
 }
 
-int Director::partition(int low, int high)
-{
-    int pivot = high;
-    int i = low - 1;
-
-    for (int j = low; j < high; j++)
-    {
-        if (less(j, pivot))
-        {
-            i++;
-            swap(i, j);
-        }
-    }
-
-    i++;
-    swap(i, high);
-    return i;
-}
-
 void Director::swap(size_t i, size_t j)
 {
     Actor *t = list[i];
@@ -98,18 +79,7 @@ bool Director::less(size_t i, size_t j)
     return cmp < 0;
 }
 
-size_t Director::sort()
+void Director::sort()
 {
-    quickSort(0, length - 1);
-    return length;
-}
-
-void Director::quickSort(int low, int high)
-{
-    if (low < high)
-    {
-        int pi = partition(low, high);
-        quickSort(low, pi - 1);
-        quickSort(pi + 1, high);
-    }
+    Sort(this);
 }

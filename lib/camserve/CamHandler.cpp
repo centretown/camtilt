@@ -1,32 +1,6 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
-#ifdef ARDUINO
 
 #include "CamHandler.h"
-
-esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val)
-{
-    if (var == NULL || val == NULL || varLen == 0)
-    {
-        return ESP_ERR_HTTPD_INVALID_REQ;
-    }
-
-    esp_err_t err = httpd_query_key_value(buf, "var", var, varLen);
-    if (err != ESP_OK)
-    {
-        return err;
-    }
-
-    char value[32] = {0};
-    err = httpd_query_key_value(buf, "val", value, sizeof(value));
-    if (err != ESP_OK)
-    {
-        return err;
-    }
-
-    *val = atoi(value);
-    return ESP_OK;
-}
-
 
 esp_err_t CamHandler::respond(httpd_req_t *req, esp_err_t res)
 {
@@ -43,7 +17,7 @@ esp_err_t CamHandler::respond(httpd_req_t *req, esp_err_t res)
     return httpd_resp_send(req, NULL, 0);
 }
 
-esp_err_t CamHandler::query(httpd_req_t *req, char *buf, size_t bufLen)
+esp_err_t CamHandler::request(httpd_req_t *req, char *buf, size_t bufLen)
 {
     size_t queryLen = httpd_req_get_url_query_len(req) + 1;
     if (bufLen < queryLen)
@@ -58,5 +32,3 @@ esp_err_t CamHandler::query(httpd_req_t *req, char *buf, size_t bufLen)
     }
     return ESP_OK;
 }
-
-#endif //ARDUINO

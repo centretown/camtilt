@@ -21,7 +21,8 @@
 // const char *password = "******";
 
 const uint8_t ledPin = 33;
-MicroTerm terminal(Serial);
+char termBuffer[81] = {0};
+MicroTerm terminal(Serial, termBuffer, sizeof(termBuffer));
 Director *dir = NULL;
 
 void setup()
@@ -29,7 +30,7 @@ void setup()
   WRITE_PERI_REG(RTC_CNTL_BROWN_OUT_REG, 0); //disable brownout detector
 
   // same as arduino servo-proxy
-  Serial.begin(38400);
+  Serial.begin(115200);
   Serial.setDebugOutput(false);
 
   // indicate power
@@ -75,18 +76,14 @@ void setup()
   }
 
   CamActor::initializeCamActors(esp_camera_sensor_get());
-  // printf("cam actors count: %lu", CamActor::camActorCount);
+  ServoActor::initializeServoActors(&terminal);
 
   dir = Director::getDirector();
-  dir->allocate(CamActor::camActorCount + 4);
-  dir->add((Actor **)servoActors, 4);
-  dir->add((Actor **)CamActor::camActors, CamActor::camActorCount);
+  dir->allocate(CamActor::actorCount + ServoActor::actorCount);
+  dir->add((Actor **)ServoActor::actors, ServoActor::actorCount);
+  dir->add((Actor **)CamActor::actors, CamActor::actorCount);
   dir->sort();
-
-  // initializeLookup(esp_camera_sensor_get(), &terminal);
 }
-
-// #include "Lookup.h"
 
 void loop()
 {
@@ -97,11 +94,9 @@ void loop()
     {
       return;
     }
-    // terminal.println(cmd);
 
     char variable[32] = {0};
-    int val = 0;
-    esp_err_t err = queryBuf(cmd, variable, sizeof(variable), &val);
+    esp_err_t err = queryVar(cmd, "var", variable, sizeof(variable));
     if (err != ESP_OK)
     {
       terminal.println(esp_err_to_name(err));
@@ -111,19 +106,23 @@ void loop()
     Actor *actor = dir->find(variable);
     if (!strcmp(actor->id, "null"))
     {
-      char buffer[32];
-      snprintf(buffer, sizeof(buffer),
-               "%s:%d NOT FOUND", variable, val);
-      terminal.println(buffer);
+      terminal.println(esp_err_to_name(ESP_ERR_HTTPD_INVALID_REQ));
       return;
     }
 
-    err = actor->act(val);
+    int val = 0;
+    err = actor->parse(cmd);
+    if (err == ActorOK)
+    {
+      err = actor->act(val);
+    }
+
     if (err != ESP_OK)
     {
       terminal.println(esp_err_to_name(err));
       return;
     }
+    terminal.println(cmd);
   }
 }
 #endif //ARDUINO

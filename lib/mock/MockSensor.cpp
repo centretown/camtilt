@@ -1,4 +1,4 @@
-#include "sensor.h"
+#include "MockSensor.h"
 #ifndef ARDUINO
 int prt(const char *p)
 {

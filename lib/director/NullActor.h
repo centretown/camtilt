@@ -10,7 +10,12 @@ public:
 
     virtual err_action_t act(int action)
     {
-        return ERR_NOT_FOUND;
+        return ActorNotFound;
+    }
+
+    virtual err_action_t parse(const char *buf)
+    {
+        return ActorNotFound;
     }
 };
 

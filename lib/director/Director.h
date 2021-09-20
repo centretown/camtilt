@@ -2,32 +2,38 @@
 
 #pragma once
 
-#include "base.h"
+#ifdef ARDUINO
+#include <Arduino.h>
+#else
+#include <stdio.h>
+#include <malloc.h>
+#include <string.h>
+#endif
+
+#include "Sort.h"
 #include "Actor.h"
 #include "NullActor.h"
 
-class Director
+class Director : public Sortable
 {
-public:
-    Actor **list = NULL;
-    size_t size = 0;
-    size_t length = 0;
-
 private:
     Director() {}
+public:
+    Actor **list = NULL;
+    static Director *getDirector();
+    static Director director;
+
+    size_t size = 0;
+    size_t length = 0;
 
 public:
     ~Director();
     size_t allocate(size_t size);
     size_t add(Actor **actor, size_t nitems);
-    size_t sort();
     Actor *find(const char *id);
-    static Director *getDirector();
-    static Director director;
 
-private:
-    int partition(int low, int high);
+    void sort();
     void swap(size_t i, size_t j);
     bool less(size_t i, size_t j);
-    void quickSort(int low, int high);
+    size_t len() { return length; }
 };

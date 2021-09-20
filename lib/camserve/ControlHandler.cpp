@@ -1,21 +1,18 @@
 // Copyright (c) 2021 Dave Marsh. See LICENSE.
 
-#ifdef ARDUINO
-
 #include "ControlHandler.h"
 
 esp_err_t ControlHandler::handle(httpd_req_t *req)
 {
     char buf[256] = {0};
-    esp_err_t err = query(req, buf, sizeof(buf));
+    esp_err_t err = request(req, buf, sizeof(buf));
     if (err != ESP_OK)
     {
         return respond(req, err);
     }
 
     char variable[32] = {0};
-    int val = 0;
-    err = queryBuf(buf, variable, sizeof(variable), &val);
+    err = queryVar(buf, "var", variable, sizeof(variable));
     if (err != ESP_OK)
     {
         return respond(req, err);
@@ -27,8 +24,12 @@ esp_err_t ControlHandler::handle(httpd_req_t *req)
         return respond(req, ESP_ERR_HTTPD_INVALID_REQ);
     }
 
-    err = actor->act(val);
+    int val = 0;
+    err = actor->parse(buf);
+    if (err == ActorOK)
+    {
+        err = actor->act(val);
+    }
+
     return respond(req, err);
 }
-
-#endif //ARDUINO
