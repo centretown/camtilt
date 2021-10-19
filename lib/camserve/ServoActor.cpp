@@ -26,11 +26,23 @@ err_action_t ServoActor::move(ServoParam *s)
     return send(s, SERVO_MOVE);
 }
 
+err_action_t ServoActor::test(ServoParam *s)
+{
+    return send(s, SERVO_TEST);
+}
+
+err_action_t ServoActor::stop(ServoParam *s)
+{
+    return send(s, SERVO_STOP);
+}
+
 ServoActor **ServoActor::actors;
 ServoActor ServoActor::items[] = {
     ServoActor("move", move),
     ServoActor("ease", ease),
     ServoActor("home", home),
+    ServoActor("test", test),
+    ServoActor("stop", stop),
 };
 
 size_t ServoActor::actorCount = sizeof(items) / sizeof(items[0]);

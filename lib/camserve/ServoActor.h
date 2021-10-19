@@ -15,6 +15,8 @@
 #define SERVO_HOME 1
 #define SERVO_MOVE 2
 #define SERVO_EASE 3
+#define SERVO_TEST 4
+#define SERVO_STOP 5
 
 typedef struct
 {
@@ -54,5 +56,7 @@ private:
     static err_action_t home(ServoParam *s);
     static err_action_t move(ServoParam *s);
     static err_action_t ease(ServoParam *s);
+    static err_action_t test(ServoParam *s);
+    static err_action_t stop(ServoParam *s);
     static err_action_t send(ServoParam *s, int command);
 };

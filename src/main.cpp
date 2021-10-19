@@ -95,34 +95,12 @@ void loop()
       return;
     }
 
-    char variable[32] = {0};
-    esp_err_t err = queryVar(cmd, "var", variable, sizeof(variable));
+    esp_err_t err = queryDirector(dir, cmd);
     if (err != ESP_OK)
     {
       terminal.println(esp_err_to_name(err));
       return;
     }
-
-    Actor *actor = dir->find(variable);
-    if (!strcmp(actor->id, "null"))
-    {
-      terminal.println(esp_err_to_name(ESP_ERR_HTTPD_INVALID_REQ));
-      return;
-    }
-
-    int val = 0;
-    err = actor->parse(cmd);
-    if (err == ActorOK)
-    {
-      err = actor->act(val);
-    }
-
-    if (err != ESP_OK)
-    {
-      terminal.println(esp_err_to_name(err));
-      return;
-    }
-    terminal.println(cmd);
   }
 }
 #endif //ARDUINO

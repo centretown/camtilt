@@ -18,6 +18,7 @@ class Director : public Sortable
 {
 private:
     Director() {}
+
 public:
     Actor **list = NULL;
     static Director *getDirector();
