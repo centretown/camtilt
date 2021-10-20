@@ -28,7 +28,7 @@ typedef struct
 
 } ServoParam;
 
-typedef err_action_t (*ServoFunc)(ServoParam *);
+typedef err_action_t (*ServoFunc)(ServoParam *,char *out, size_t outlen);
 
 class ServoActor : public Actor
 {
@@ -41,10 +41,7 @@ public:
     ~ServoActor() {}
 
     virtual err_action_t parse(const char *);
-    virtual err_action_t act(int action)
-    {
-        return func(&param);
-    }
+    virtual err_action_t act(int action, char *out = NULL, size_t outlen = 0);
     static ServoActor **actors;
     static ServoActor items[];
     static size_t actorCount;
@@ -53,10 +50,10 @@ public:
 
 private:
     static ServoParam params[];
-    static err_action_t home(ServoParam *s);
-    static err_action_t move(ServoParam *s);
-    static err_action_t ease(ServoParam *s);
-    static err_action_t test(ServoParam *s);
-    static err_action_t stop(ServoParam *s);
-    static err_action_t send(ServoParam *s, int command);
+    static err_action_t home(ServoParam *s, char *out, size_t outlen);
+    static err_action_t move(ServoParam *s, char *out, size_t outlen);
+    static err_action_t ease(ServoParam *s, char *out, size_t outlen);
+    static err_action_t test(ServoParam *s, char *out, size_t outlen);
+    static err_action_t stop(ServoParam *s, char *out, size_t outlen);
+    static err_action_t send(ServoParam *s, int command, char *out, size_t outlen);
 };

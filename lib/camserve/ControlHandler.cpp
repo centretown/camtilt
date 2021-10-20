@@ -11,6 +11,7 @@ esp_err_t ControlHandler::handle(httpd_req_t *req)
         return respond(req, err);
     }
 
-    err = queryDirector(dir, buf);
-    return respond(req, err);
+    char out[256] = {0};
+    err = queryDirector(dir, buf, out, sizeof(out));
+    return respond(req, err, out, sizeof(out));
 }

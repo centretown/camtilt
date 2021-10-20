@@ -60,14 +60,7 @@ esp_err_t StatusHandler::handle(httpd_req_t *req)
              sensor->status.hmirror,
              sensor->status.dcw,
              sensor->status.colorbar);
-
-    esp_err_t err = httpd_resp_set_type(req, "application/json");
-    if (err)
-        return respond(req, err);
-    err = httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-    if (err)
-        return respond(req, err);
-    return httpd_resp_send(req, json_response, strlen(json_response));
+    return respond(req, ESP_OK, json_response, strlen(json_response));
 }
 
 #endif //ARDUINO

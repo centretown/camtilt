@@ -2,19 +2,25 @@
 
 #include "CamHandler.h"
 
-esp_err_t CamHandler::respond(httpd_req_t *req, esp_err_t res)
+esp_err_t CamHandler::respond(httpd_req_t *req, esp_err_t err, const char *buf, size_t buflen)
 {
-    if (res != ESP_OK)
+    if (err != ESP_OK)
     {
         return httpd_resp_send_500(req);
     }
-    // httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-    // httpd_resp_set_hdr(req, "Access-Control-Max-Age", "600");
-    // httpd_resp_set_hdr(req, "Access-Control-Allow-Methods", "PUT,POST,GET,OPTIONS");
-    // httpd_resp_set_hdr(req, "Access-Control-Allow-Headers", "*");
-
+    const char *resp = NULL;
+    size_t resp_length = 0;
+    if (buf != NULL)
+    {
+        resp_length = strlen(buf);
+        if (resp_length > 0)
+        {
+            resp = buf;
+            httpd_resp_set_type(req, "application/json");
+        }
+    }
     httpd_resp_set_hdr(req, "Access-Control-Allow-Origin", "*");
-    return httpd_resp_send(req, NULL, 0);
+    return httpd_resp_send(req, resp, resp_length);
 }
 
 esp_err_t CamHandler::request(httpd_req_t *req, char *buf, size_t bufLen)

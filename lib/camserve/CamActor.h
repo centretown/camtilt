@@ -30,7 +30,7 @@ public:
 
     ~CamActor() {}
 
-    virtual err_action_t act(int action)
+    virtual err_action_t act(int action, char *out = NULL, size_t outlen = 0)
     {
         return func(sensor, param.value);
     }

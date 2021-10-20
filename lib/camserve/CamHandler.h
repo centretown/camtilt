@@ -18,6 +18,6 @@ public:
     ~CamHandler() {}
 
     static esp_err_t request(httpd_req_t *req, char *buf, size_t buf_len);
-    static esp_err_t respond(httpd_req_t *req, esp_err_t res);
+    static esp_err_t respond(httpd_req_t *req, esp_err_t res, const char* buf = NULL, size_t buflen = 0);
     virtual esp_err_t handle(httpd_req_t *req) = 0;
 };

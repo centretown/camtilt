@@ -33,7 +33,7 @@ esp_err_t queryBuf(const char *buf, char *var, size_t varLen, int *val)
     return queryVal(buf, "val", val);
 }
 
-esp_err_t queryDirector(Director *dir, const char *buf)
+esp_err_t queryDirector(Director *dir, const char *buf, char *out, size_t outlen)
 {
     char variable[32] = {0};
     esp_err_t err = queryVar(buf, "var", variable, sizeof(variable));
@@ -55,6 +55,6 @@ esp_err_t queryDirector(Director *dir, const char *buf)
         return ESP_ERR_HTTPD_INVALID_REQ;
     }
 
-    err = actor->act(val);
+    err = actor->act(val, out, outlen);
     return err;
 }
