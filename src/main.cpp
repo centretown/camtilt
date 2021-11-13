@@ -85,6 +85,7 @@ void setup()
   dir->sort();
 }
 
+// trivial change
 void loop()
 {
   if (terminal.ready())
